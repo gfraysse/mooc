@@ -11,6 +11,7 @@
 
 from ortools.constraint_solver import pywrapcp
 from ortools.linear_solver import pywraplp
+from operator import itemgetter
 
 # https://github.com/google/or-tools/blob/master/examples/python/coloring_ip.py
 def ortools_alternate_solver(node_count, edge_count, edges):
@@ -159,44 +160,165 @@ def ortools_linear_solver(node_count, edge_count, edges):
                 solution.append(c)
                 #print(c)
 
+    print "Time:", solver.WallTime(), "ms"
     
     return num_colors, solution
 
-def ortools_solver_v2(node_count, edge_count, edges):
-    solver = pywrapcp.Solver("coloring")
+def prune(constraint, domain):
+    return True
+
+def propagate(constraints, domain):
+    domain_reduced = True
+    while(domain_reduced):
+        domain_reduced = False
+        for constraint in constraints:
+            if constraint(domain) == False:
+                return False
+            else:
+                domain_reduced = prune(constraint, domain)
+                #domain_reduced = True
+
+    return True
     
+#GF TODO
+def ortools_diy_solver(node_count, edge_count, edges):
+    degree_nodes = [0 for _ in range(node_count)] 
+    neighbours = [[] for _ in range(node_count)]
+    for e in range(edge_count):
+        neighbours[edges[e][0]].append(edges[e][1])
+        neighbours[edges[e][1]].append(edges[e][0])
+    for i in range(len(neighbours)):
+        degree_nodes[i] += len(neighbours[i])
+    #print "degree", degree_nodes
+
+    nodes_unordered = [i for i in range(node_count)]
+    decorated = []
+    for i in range(node_count):
+        decorated.append([nodes_unordered[i], degree_nodes[i]])
+    decorated.sort(key=itemgetter(1), reverse=True)
+    nodes_ordered = [i for i, _ in decorated]                         
+
+    #print  "nodes_ordered", nodes_ordered
     # Creates the variables.
-    #GF TODO: sort by degree of nodes
-    nodes = [solver.IntVar(0, node_count - 1, "node%i" % i) for i in range(node_count)]
     nc = 10
     node_color = [0 for _ in range(nc * node_count)]
 
     # reification of the constraint node_color[v*nc+c] is 0 or 1 whether node v is of color c
-    for v in range(node_count):
+    for v in nodes_ordered:
         for c in range(nc):
             node_color[nc * v + c] = solver.IntVar(0, 1, 'v[%i,%i]' % (v, c))
             #print nc*v+j
 
     # each node must be assigned exactly one color
-    for i in range(node_count):
+    for i in nodes_ordered:
         constraint = solver.Sum(node_color[c] for c in range(i * nc,(i + 1) * nc)) == 1
         solver.Add(constraint)
         
     # u[c] = 1 means that color c is used, i.e. assigned to some node
     u = [solver.IntVar(0, 1, 'u[%i]' % i) for i in range(nc)]
 
-    degree_nodes = [0 for _ in range(node_count)] # number of nodes for each color lower bound
+    # Creates the constraints.    
+    edge_origin_color = [0 for _ in range(edge_count)]
+    edge_destination_color = [0 for _ in range(edge_count)]
+    for e in range(edge_count):
+        a_total = 0 
+        b_total = 0 
+        for c in range(nc):
+            a = node_color[edges[e][0] * nc + c]
+            b = node_color[edges[e][1] * nc + c]
+            a_total += a * (10**c)
+            b_total += b * (10**c)
+            #print a,b
+            solver.Add(a + b <= u[c])
+            #solver.Add(a + b <= 1)
+        #print e, a_total, b_total
+        edge_origin_color[e] = a_total
+        edge_destination_color[e] = b_total
+        constraint = edge_origin_color[e] != edge_destination_color[e] 
+        solver.Add(constraint)
+        #print constraint.DebugString()
+
+    # To reduce symmetry, consider an order on the first two vertices
+    first_edge_vertex = edges[0][0]
+    first_edge_vertex_neighbour = neighbours[0][0]
+    #print first_edge_vertex, first_edge_vertex_neighbour
+    full_color_node_1 = 0
+    full_color_node_2 = 0
+    full_color_1 = 0
+    full_color_2 = 0
+    for c in range(nc):
+        full_color_node_1 += node_color[0 * nc +c] * (10**c)
+        full_color_node_2 += node_color[1 * nc +c] * (10**c)
+        full_color_1 += node_color[first_edge_vertex * nc +c] * (10**c)
+        full_color_2 += node_color[first_edge_vertex_neighbour * nc +c] * (10**c)
+    #print full_color_1, full_color_2
+    solver.Add(full_color_1 < full_color_2)
+    solver.Add(full_color_node_1 <= full_color_node_2)
+
+    colored_items = [0 for _ in range(nc)]
+    for c in range(nc):
+        for v in nodes_ordered:
+            colored_items[c] += node_color[nc * v + c]
+
+    nb_colors_used = solver.Sum(colored_items[c] != 0 for c in range(nc))
+        
+    # Find the solution that minimizes the number of colors of the graph
+    obj_var = nb_colors_used
+    solver.Add(obj_var > 1)
+    solver.Add(obj_var < max(degree_nodes))
+    objective_monitor = solver.Minimize(obj_var, 1)
+
+
+
+def ortools_solver_v2(node_count, edge_count, edges):
+    solver = pywrapcp.Solver("coloring")
+    
+    degree_nodes = [0 for _ in range(node_count)]
+    neighbours = [[] for _ in range(node_count)]
+    for e in range(edge_count):
+        neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
+        neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
+    for i in range(len(neighbours)):
+        degree_nodes[i] += len(neighbours[i])
+
+    #print "degree", degree_nodes
+
+    nodes_unordered = [i for i in range(node_count)]
+    decorated = []
+    for i in range(node_count):
+        decorated.append([nodes_unordered[i], degree_nodes[i]])
+    decorated.sort(key=itemgetter(1), reverse=True)
+    nodes_ordered = [i for i, _ in decorated]                         
+
+    #print  "nodes_ordered", nodes_ordered
+    # Creates the variables.    
+    #nodes = [solver.IntVar(0, node_count - 1, "node%i" % i) for i in nodes_ordered]
+    nc = 10
+    node_color = [0 for _ in range(nc * node_count)]
+
+    # reification of the constraint node_color[v*nc+c] is 0 or 1 whether node v is of color c
+    for v in nodes_ordered:
+        for c in range(nc):
+            node_color[nc * v + c] = solver.IntVar(0, 1, 'v[%i,%i]' % (v, c))
+            #print nc*v+j
+
+    # each node must be assigned exactly one color
+    for i in nodes_ordered:
+        constraint = solver.Sum(node_color[c] for c in range(i * nc,(i + 1) * nc)) == 1
+        solver.Add(constraint)
+        
+    # u[c] = 1 means that color c is used, i.e. assigned to some node
+    u = [solver.IntVar(0, 1, 'u[%i]' % i) for i in range(nc)]
+
     #lb_color_total_nodes = [0 for _ in range(node_count)] # number of nodes for each color lower bound
     #ub_color_total_nodes = [node_count for _ in range(node_count)] # number of nodes for each color upper bound
     
     # Creates the constraints.    
-    neighbours = [[] for _ in range(node_count)]
-
     edge_origin_color = [0 for _ in range(edge_count)]
     edge_destination_color = [0 for _ in range(edge_count)]
     for e in range(edge_count):
-        neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
-        neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
+        # neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
+        # neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
 
         a_total = 0 
         b_total = 0 
@@ -234,14 +356,14 @@ def ortools_solver_v2(node_count, edge_count, edges):
 
     colored_items = [0 for _ in range(nc)]
     for c in range(nc):
-        for v in range(node_count):
+        for v in nodes_ordered:
             colored_items[c] += node_color[nc * v + c]
 
     nb_colors_used = solver.Sum(colored_items[c] != 0 for c in range(nc))
     #print nb_colors_used
     #print colored_items
-    for i in range(len(neighbours)):
-        degree_nodes[i] += len(neighbours[i])
+    # for i in range(len(neighbours)):
+    #     degree_nodes[i] += len(neighbours[i])
         #ub_color_total_nodes[i] -= len(neighbours[i])
         #print i, neighbours[i], lb_color_total_nodes[i],  ub_color_total_nodes[i]
 
@@ -262,7 +384,7 @@ def ortools_solver_v2(node_count, edge_count, edges):
                                
     db = solver.Phase(node_color,
                       solver.CHOOSE_FIRST_UNBOUND,
-                      solver.ASSIGN_MIN_VALUE)
+                      solver.ASSIGN_MAX_VALUE)
     
     collector = solver.FirstSolutionCollector()
 
@@ -277,6 +399,7 @@ def ortools_solver_v2(node_count, edge_count, edges):
     num_solutions = 0
     num_colors = 0
     while solver.NextSolution():
+        print "Time:", solver.WallTime(), "ms"
         solution = []
 
         #print nb_colors_used.Var().Value()
@@ -286,7 +409,10 @@ def ortools_solver_v2(node_count, edge_count, edges):
         #     print e, edges[e][0], edge_origin_color[e].Var().Value(), edges[e][1], edge_destination_color[e].Var().Value()
         #print u
         # Displays the solution just computed.
+        #print "nodes", nodes
+        #for v in nodes_ordered:
         for v in range(node_count):
+            #print "nodes", nodes[v].Value()
             for c in range(nc):
                 #print v,c, node_color[nc * v + c]
                 if node_color[nc * v + c].Value() == 1:
@@ -304,12 +430,155 @@ def ortools_solver_v2(node_count, edge_count, edges):
     
     return num_colors, solution
 
+def graph_valid(edges, node_color_sol):
+    for edge in edges:
+        if node_color_sol[edge[0]] == node_color_sol[edge[1]] and node_color_sol[edge[0]] !=-1:
+            print "solution incorrecte for edge", edge, "same color", node_color_sol[edge[0]]
+            return False
+        
+    return True
+
+recursion_level = 0
+def ortools_solver_v1_diy_recursive(node_id, node_count, edge_count, edges, node_color, node_color_sol):
+    global recursion_level
+    recursion_level += 1
+    # Creates the variables.
+    degree_nodes = [0 for _ in range(node_count)]
+    neighbours = [[] for _ in range(node_count)]
+    for e in range(edge_count):
+        neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
+        #neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
+    for i in range(len(neighbours)):
+        degree_nodes[i] += len(neighbours[i])
+
+    #print "neighbours", neighbours
+    #print "recursion_level", recursion_level
+    
+    if node_color_sol[node_id] == -1:
+        iterator0 = None
+        try:
+            iterator0 = node_color[node_id].DomainIterator()            
+        except IndexError, e:
+            print  "  "*recursion_level,"No more possible colors for node", node_id
+            return False
+        for i in iterator0:
+            color0 = iterator0.Value()        
+            node_color_sol[node_id] = color0
+            if graph_valid(edges, node_color_sol) == True:
+                break
+
+    else:
+        color0 = node_color_sol[node_id]
+    print "  "*recursion_level, "node",node_id, "color0", color0, "neighbours", neighbours[node_id]
+
+    ret = False
+    for neighbour in neighbours[node_id]:
+        print "  "*recursion_level, "  neighbour", neighbour
+        if node_color_sol[node_id] != -1 and node_color_sol[neighbour] != -1:
+            print "  "*recursion_level, "  colors already found, going through next neighbour"
+            if node_color_sol[node_id] != node_color_sol[neighbour]:
+                print "haha"
+                return True
+            else:
+                recursion_level -= 1
+                print "bb"
+                return False
+            
+        if node_color_sol[neighbour] == -1:
+            print "  "*recursion_level, "looking for a color for node", neighbour
+            iterator1 = None
+            try:
+                iterator1 = node_color[neighbour].DomainIterator()                
+            except IndexError, e:
+                print e
+                print  "  "*recursion_level,"No more adjacent vertex for node", node_id
+                return True
+            for j in iterator1:                        
+                color1 = j
+                print "  "*recursion_level, "  node",node_id, "color0", color0, "neighbour", neighbour, "color1", color1
+                if color1 == color0:
+                    print "  ==", color0, " not a possible value"
+                    node_color[neighbour].RemoveValue(color1)
+                    print "  "*recursion_level, "********* neighbour", neighbour, node_color[neighbour]
+                else:
+                    node_color_sol[neighbour] = color1
+                    if graph_valid(edges, node_color_sol) == True:
+                        print "  "*recursion_level, " valid color for", neighbour, "node_color_sol1", node_color_sol
+                        if neighbours[neighbour] != []:
+                            ret = ortools_solver_v1_diy_recursive(neighbour, node_count, edge_count, edges, node_color, node_color_sol)
+                            if ret != False:
+                                #recursion_level -= 1
+                                #return False
+                                break
+                        else:
+                            return True
+
+    if ret == False:
+        return False
+    else:
+        print node_id, node_color[node_id], color0
+        #node_color[node_id].RemoveValue(color0)
+        print "  "*recursion_level, "node_id", node_id, node_color[node_id]
+        print "tata"
+        recursion_level -= 1
+        
+    return True
+
+def num_color_in_sol(node_solor_sol):
+    return len(set(node_solor_sol))
+
+def ortools_solver_v1_diy(node_count, edge_count, edges):
+    solver = pywrapcp.Solver("coloring")
+
+    # Creates the variables.
+    degree_nodes = [0 for _ in range(node_count)]
+    neighbours = [[] for _ in range(node_count)]
+    for e in range(edge_count):
+        neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
+        #neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
+    for i in range(len(neighbours)):
+        degree_nodes[i] += len(neighbours[i])
+
+    print neighbours
+    nc = 20
+
+    # Find the solution that minimizes the number of colors of the graph
+    num_solutions = 0
+
+    # node 0 is always of color 0
+    #for color in range(nc):
+    #print "remaining values for node_color are ", node_color[0]
+    #for n in range(node_count):
+    node_color = [solver.IntVar(0, nc, "node_color%i" % i) for i in range(0, node_count)]
+    node_color_sol = [-1 for i in range(node_count)]
+    node_color_sol[0] = 0
+
+    for n in range(node_count):        
+        result = ortools_solver_v1_diy_recursive(n, node_count, edge_count, edges, node_color, node_color_sol)
+    print "result", result
+
+        #print "node_color_sol2", node_color_sol
+
+    solution = []
+    print "Solution found", node_color_sol
+
+    num_solutions += 1
+    solution.append(node_color_sol)
+
+    num_colors = num_color_in_sol(node_color_sol)
+    graph_valid(edges, node_color_sol)
+
+        
+    print "Solutions found:", num_solutions
+    print "Time:", solver.WallTime(), "ms"
+    
+    return num_colors, solution[0]
+
 def ortools_solver_v1(node_count, edge_count, edges):
     solver = pywrapcp.Solver("coloring")
     
     # Creates the variables.
     nodes = [solver.IntVar(0, node_count - 1, "node%i" % i) for i in range(node_count)]
-    neighbours = [[] for _ in range(node_count)]
     nc = 20
     node_color = [solver.IntVar(0, nc, "node_color%i" % i) for i in range(node_count)]
 
@@ -338,6 +607,7 @@ def ortools_solver_v1(node_count, edge_count, edges):
     num_solutions = 0
     num_colors = 0
     while solver.NextSolution():
+        print "Time:", solver.WallTime(), "ms"
         solution = []
 
         # Displays the solution just computed.
@@ -372,18 +642,22 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
-    # build a trivial solution
-    # every node has its own color
-    #solution = range(0, node_count)
-    #num_colors, solution = ortools_linear_solver(node_count, edge_count, edges) #OK for 20_1 and 20_7
-    #num_colors, solution = ortools_alternate_solver(node_count, edge_count, edges) #KO
-    #num_colors, solution = ortools_solver_v1(node_count, edge_count, edges) # OK for 20_x 50_3
-    num_colors, solution = ortools_solver_v2(node_count, edge_count, edges) # KO
+    solvers = [ortools_solver_v1_diy]#,ortools_solver_v1, ortools_solver_v2]#, ortools_linear_solver, ortools_alternate_solver]
+    for solver in solvers:
+        print solver
+        # build a trivial solution
+        # every node has its own color
+        #solution = range(0, node_count)
+        #num_colors, solution = ortools_linear_solver(node_count, edge_count, edges) #OK for 20_1 and 20_7
+        #num_colors, solution = ortools_alternate_solver(node_count, edge_count, edges) #KO
+        #num_colors, solution = ortools_solver_v1(node_count, edge_count, edges) # OK for 20_x 50_3
+        #num_colors, solution = ortools_solver_v2(node_count, edge_count, edges) # OK for 20_1, slow for 50_3 and 20_3
+        num_colors, solution = solver(node_count, edge_count, edges)        
 
-
-    # prepare the solution in the specified output format
-    output_data = str(num_colors) + ' ' + str(0) + '\n'
-    output_data += ' '.join(map(str, solution))
+        # prepare the solution in the specified output format
+        output_data = str(solver) + '\n'
+        output_data = str(num_colors) + ' ' + str(0) + '\n'
+        output_data += ' '.join(map(str, solution)) + '\n'
 
     return output_data
 
