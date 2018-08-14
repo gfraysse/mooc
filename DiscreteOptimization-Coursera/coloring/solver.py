@@ -433,94 +433,146 @@ def ortools_solver_v2(node_count, edge_count, edges):
 def graph_valid(edges, node_color_sol):
     for edge in edges:
         if node_color_sol[edge[0]] == node_color_sol[edge[1]] and node_color_sol[edge[0]] !=-1:
-            print "solution incorrecte for edge", edge, "same color", node_color_sol[edge[0]]
+            #print "solution incorrecte for edge", edge, "same color", node_color_sol[edge[0]]
             return False
         
     return True
 
 recursion_level = 0
-def ortools_solver_v1_diy_recursive(node_id, node_count, edge_count, edges, node_color, node_color_sol):
+def ortools_solver_v1_diy_recursive(solver, nc, node_id, node_count, edge_count, edges, node_color, node_color_sol):
     global recursion_level
     recursion_level += 1
+
     # Creates the variables.
     degree_nodes = [0 for _ in range(node_count)]
     neighbours = [[] for _ in range(node_count)]
     for e in range(edge_count):
         neighbours[edges[e][0]].append(edges[e][1]) #solver.IntVar(edge[1],edge[1]))
         #neighbours[edges[e][1]].append(edges[e][0]) #solver.IntVar(edge[0],edge[0]))
-    for i in range(len(neighbours)):
-        degree_nodes[i] += len(neighbours[i])
 
     #print "neighbours", neighbours
     #print "recursion_level", recursion_level
-    
-    if node_color_sol[node_id] == -1:
+
+    color_domain = []
+    #print node_id, node_color_sol
+    if node_color_sol[node_id] != -1:
+        color_domain.append(node_color_sol[node_id])
+    else:
         iterator0 = None
         try:
-            iterator0 = node_color[node_id].DomainIterator()            
+            iterator0 = node_color[node_id].DomainIterator()
+            #print "iterator0", iterator0
+            #print "iterator0", iterator0.Value()
         except IndexError, e:
             print  "  "*recursion_level,"No more possible colors for node", node_id
             return False
-        for i in iterator0:
-            color0 = iterator0.Value()        
-            node_color_sol[node_id] = color0
-            if graph_valid(edges, node_color_sol) == True:
-                break
-
-    else:
-        color0 = node_color_sol[node_id]
-    print "  "*recursion_level, "node",node_id, "color0", color0, "neighbours", neighbours[node_id]
-
-    ret = False
-    for neighbour in neighbours[node_id]:
-        print "  "*recursion_level, "  neighbour", neighbour
-        if node_color_sol[node_id] != -1 and node_color_sol[neighbour] != -1:
-            print "  "*recursion_level, "  colors already found, going through next neighbour"
-            if node_color_sol[node_id] != node_color_sol[neighbour]:
-                print "haha"
-                return True
-            else:
-                recursion_level -= 1
-                print "bb"
-                return False
+    for i in node_color[node_id].DomainIterator():
+        color0 = i        
+        color_domain.append(color0)
+        # node_color_sol[node_id] = color0
+        # if graph_valid(edges, node_color_sol) == True:
+        #     print color0, "is a valid color for node", node_id
+        #     break
             
-        if node_color_sol[neighbour] == -1:
-            print "  "*recursion_level, "looking for a color for node", neighbour
-            iterator1 = None
-            try:
-                iterator1 = node_color[neighbour].DomainIterator()                
-            except IndexError, e:
-                print e
-                print  "  "*recursion_level,"No more adjacent vertex for node", node_id
-                return True
-            for j in iterator1:                        
-                color1 = j
-                print "  "*recursion_level, "  node",node_id, "color0", color0, "neighbour", neighbour, "color1", color1
-                if color1 == color0:
-                    print "  ==", color0, " not a possible value"
-                    node_color[neighbour].RemoveValue(color1)
-                    print "  "*recursion_level, "********* neighbour", neighbour, node_color[neighbour]
-                else:
-                    node_color_sol[neighbour] = color1
-                    if graph_valid(edges, node_color_sol) == True:
-                        print "  "*recursion_level, " valid color for", neighbour, "node_color_sol1", node_color_sol
-                        if neighbours[neighbour] != []:
-                            ret = ortools_solver_v1_diy_recursive(neighbour, node_count, edge_count, edges, node_color, node_color_sol)
-                            if ret != False:
-                                #recursion_level -= 1
-                                #return False
-                                break
-                        else:
-                            return True
 
-    if ret == False:
-        return False
-    else:
-        print node_id, node_color[node_id], color0
-        #node_color[node_id].RemoveValue(color0)
-        print "  "*recursion_level, "node_id", node_id, node_color[node_id]
-        print "tata"
-        recursion_level -= 1
+    result = False
+    
+    for color in color_domain:
+        #print "testing color", color, "for node", node_id
+        node_color_sol[node_id] = color
+        if graph_valid(edges, node_color_sol) == False:
+            node_color[node_id].RemoveValue(color)
+            #print color, "is NOT a valid color for node", node_id, "trying another color for node"
+            continue
+
+        for neighbour in neighbours[node_id]:
+            node_color[neighbour] = solver.IntVar(0, nc, "node_color%i" % neighbour) 
+            
+        if neighbours[node_id] != []:
+            for neighbour in neighbours[node_id]:
+                #print "considering neighbour", neighbour
+                result = ortools_solver_v1_diy_recursive(solver, nc, neighbour, node_count, edge_count, edges, node_color, node_color_sol)
+                if result == False:
+                    #print "Invalid solution, trying another color for node", node_id
+                    node_color[neighbour].RemoveValue(color)
+                    break
+                if graph_valid(edges, node_color_sol) == False:
+                    #print color, "is NOT a valid color for node", node_id, "trying another color for node"
+                    result = False
+                    break
+            if result == False:
+                #print color, "is NOT a valid color for node", node_id, "trying another color for node"
+                node_color[node_id].RemoveValue(color)
+                break
+                
+        else:
+            #debug_print "node", node_id, "has no neighbour"
+            recursion_level -= 1
+            return True
+        
+        if result == True:
+            #print color, "is a valid color for node", node_id
+            recursion_level -= 1
+            return True
+            
+
+    
+
+    # print "  "*recursion_level, "node",node_id, "color0", color0, "neighbours", neighbours[node_id]
+
+    # ret = False
+    # for neighbour in neighbours[node_id]:
+    #     print "  "*recursion_level, "  neighbour", neighbour
+    #     if node_color_sol[node_id] != -1 and node_color_sol[neighbour] != -1:
+    #         print "  "*recursion_level, "  colors already found, going through next neighbour"
+    #         if node_color_sol[node_id] != node_color_sol[neighbour]:
+    #             print "haha"
+    #             continue
+    #         else:
+    #             recursion_level -= 1
+    #             print "bb"
+    #             return False
+            
+    #     if node_color_sol[neighbour] == -1:
+    #         print "  "*recursion_level, "looking for a color for node", neighbour
+    #         iterator1 = None
+    #         try:
+    #             iterator1 = node_color[neighbour].DomainIterator()                
+    #         except IndexError, e:
+    #             print e
+    #             print  "  "*recursion_level,"No more adjacent vertex for node", node_id
+    #             return True
+    #         for j in node_color[neighbour].DomainIterator():                        
+    #             color1 = j
+    #             print "  "*recursion_level, " testing color for node",node_id, "color0", color0, "neighbour", neighbour, "color1", color1
+    #             if color1 == color0:
+    #                 print "  ==", color0, " not a possible value"
+    #                 node_color[neighbour].RemoveValue(color1)
+    #                 print "  "*recursion_level, "********* neighbour", neighbour, node_color[neighbour]
+    #             else:
+    #                 node_color_sol[neighbour] = color1
+    #                 if graph_valid(edges, node_color_sol) == True:
+    #                     print "  "*recursion_level, " valid color for", neighbour, "node_color_sol1", node_color_sol
+    #                     if neighbours[neighbour] != []:
+    #                         ret = ortools_solver_v1_diy_recursive(neighbour, node_count, edge_count, edges, node_color, node_color_sol)
+    #                         if ret != False:
+    #                             #recursion_level -= 1
+    #                             #return False
+    #                             break
+    #                     else:
+    #                         return True
+    #     else:
+    #         print "dd"
+
+    # if ret == False:
+    #     print "cc"
+    #     return False
+    # else:
+    #     print node_id, node_color[node_id], color0
+    #     #node_color[node_id].RemoveValue(color0)
+    #     print "  "*recursion_level, "node_id", node_id, node_color[node_id]
+    #     print "tata"
+    #     recursion_level -= 1
         
     return True
 
@@ -539,7 +591,7 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     for i in range(len(neighbours)):
         degree_nodes[i] += len(neighbours[i])
 
-    print neighbours
+    #print neighbours
     nc = 20
 
     # Find the solution that minimizes the number of colors of the graph
@@ -554,19 +606,23 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     node_color_sol[0] = 0
 
     for n in range(node_count):        
-        result = ortools_solver_v1_diy_recursive(n, node_count, edge_count, edges, node_color, node_color_sol)
-    print "result", result
+        result = ortools_solver_v1_diy_recursive(solver, nc, n, node_count, edge_count, edges, node_color, node_color_sol)
+    #print "result", result
 
         #print "node_color_sol2", node_color_sol
 
     solution = []
-    print "Solution found", node_color_sol
+    #print "Solution found", node_color_sol
 
     num_solutions += 1
     solution.append(node_color_sol)
 
     num_colors = num_color_in_sol(node_color_sol)
-    graph_valid(edges, node_color_sol)
+    if graph_valid(edges, node_color_sol) != True:
+        print "Solution is INVALID"
+    #else:
+        #print "Solution is valid"
+        
 
         
     print "Solutions found:", num_solutions
@@ -642,7 +698,7 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
-    solvers = [ortools_solver_v1_diy]#,ortools_solver_v1, ortools_solver_v2]#, ortools_linear_solver, ortools_alternate_solver]
+    solvers = [ortools_solver_v1_diy]#, ortools_solver_v1, ortools_solver_v2]#, ortools_linear_solver, ortools_alternate_solver]
     for solver in solvers:
         print solver
         # build a trivial solution
@@ -654,6 +710,11 @@ def solve_it(input_data):
         #num_colors, solution = ortools_solver_v2(node_count, edge_count, edges) # OK for 20_1, slow for 50_3 and 20_3
         num_colors, solution = solver(node_count, edge_count, edges)        
 
+        if graph_valid(edges, solution) != True:
+            print "Solution is INVALID"
+        else:
+            print "Solution is valid"
+            
         # prepare the solution in the specified output format
         output_data = str(solver) + '\n'
         output_data = str(num_colors) + ' ' + str(0) + '\n'
