@@ -711,11 +711,16 @@ def color_of_neighbours_ok(node_id, edges, node_color_sol):
 
     return True
 
-def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution):
-    global recursion_level, FOUND_SOLUTION
+best_solution = []
+list_of_solutions = []
+visited_nodes = set([])
+def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol):
+    global recursion_level, FOUND_SOLUTION, best_solution, list_of_solutions, visited_nodes
     recursion_level += 1
 
     node_id = nodes_ordered[node]
+    visited_nodes.add(node_id)
+    #print "node",node,"node_id",node_id, "visited_nodes", sorted(visited_nodes, key=int)
     #print "remaining node to find", node_color_sol.count(-1)
     indentation_per_recursion_level = "    "
     
@@ -724,11 +729,255 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
     neighbours = [[] for _ in range(node_count)]
     for e in range(edge_count):
         neighbours[edges[e][0]].append(edges[e][1])
+        neighbours[edges[e][1]].append(edges[e][0])
 
-    #debug_print("neighbours", neighbours)
+    # Sort neighbours by degrees (number of adjacent nodes)
+    degree_nodes = [0 for _ in range(node_count)]
+    for i in range(len(neighbours)):
+        #debug_print("neighbours of node #"+str(i)+" are "+str(neighbours[i]))
+        degree_nodes[i] += len(neighbours[i])
+        #print "degree of node",i,"is",degree_nodes[i]
+
+    #print("neighbours"+str(neighbours))
+    neighbours_unordered = [i for i in range(node_count)]
+    for n in range(len(neighbours)):
+        decorated = []
+        #print n,neighbours[n]
+        for i in range(len(neighbours[n])):
+            decorated.append([neighbours[n][i], degree_nodes[neighbours[n][i]]])
+        decorated.sort(key=itemgetter(1), reverse=True)
+        neighbours[n] = [i for i, _ in decorated]                         
+        #print n,neighbours[n]
+
+    #print("neighbours"+str(neighbours))
+    #print("neighbours"+str(neighbours[node_id]))
     #debug_print("recursion_level", recursion_level)
     #print("recursion_level", recursion_level)
-    print node_id
+    #print node_id
+    
+    #print "coin", node_id, node_color[node_id]
+    color_domain = []    
+    debug_print(indentation_per_recursion_level*recursion_level+"node_id="+str(node_id)+" solution="+str(node_color_sol))
+    if node_color_sol[node_id] != -1:
+        color_domain.append(node_color_sol[node_id])
+    else:
+        iterator0 = None
+        try:
+            iterator0 = node_color[node_id].DomainIterator()
+            #debug_print "iterator0", iterator0
+            #debug_print "iterator0", iterator0.Value()
+        except IndexError, e:
+            #print node_color_sol, node_color
+            print  indentation_per_recursion_level*recursion_level,"No more possible colors for node", node_id
+            recursion_level -= 1
+            return False
+    for i in node_color[node_id].DomainIterator():
+        color0 = i        
+        color_domain.append(color0)
+        # node_color_sol[node_id] = color0
+        # if graph_valid(edges, node_color_sol) == True:
+        #     print color0, " is a valid color for node", node_id
+        #     break
+            
+
+    result = False
+    reinit = False
+    node_color_sol_init = node_color_sol[:]
+
+    if -1 not in node_color_sol:
+        print "??"
+
+    num_color_current = num_color_in_sol(node_color_sol)
+    if  num_color_current >= num_color_in_sol(best_solution):
+        #print "a More colors in current solution than in best one", num_color_current
+        recursion_level -= 1
+        return False
+    
+    for color in color_domain:
+        #debug_print(indentation_per_recursion_level*recursion_level+"testing color "+str(color)+" for node "+str(node_id))
+        #print(indentation_per_recursion_level*recursion_level+"testing color "+str(color)+" for node "+str(node_id))
+        #print(indentation_per_recursion_level*recursion_level+"testing color "+str(color)+" for node "+str(node_id))
+
+        # break symmetries
+        if node_id == edges[0][1]:
+            if node_color_sol[edges[0][0]] != -1:
+                if node_color_sol[edges[0][0]] >= color:
+                    continue
+                #Skip previously found combination for first edge
+                if combination_already_found(list_of_solutions, edges, node_color_sol, color) == True:
+                    continue
+
+        if node_color_sol[node_id] != color:
+            reinit = True
+            node_color_sol[node_id] = color
+
+        ret = graph_valid(edges, node_color_sol)        
+        if ret != True:
+            #print node_color[node_id], color
+            try:
+                #print "a", node_id, node_color[node_id], color
+                node_color[node_id].RemoveValue(color)
+                debug_print(indentation_per_recursion_level*recursion_level+str(color)+" is NOT a valid color for node "+str(node_id)+" due to "+str(ret)+" trying another color for node")
+                continue
+            except Exception, e:
+                #print node_color_sol, node_color
+                print "No more possible value for node_id", node_id
+                recursion_level -= 1
+                return False
+
+        #If we were in the last leaf we might have found a solution, let's check
+        if -1 not in node_color_sol:
+            #print "tintin"
+            #print "node_id", node_id, "recursion_level", recursion_level
+            #list_of_solutions.append(node_color_sol[:])
+            #print node_color_sol
+            node_color_sol = node_color_sol_init[:]
+            # #print node_color_sol
+            # print "one solution found"
+
+            # if num_color_in_sol(sol[-1]) < num_color_in_sol(best_solution):
+            #     best_solution = sol[-1]
+            #     debug_print("best solution is now "+str(best_solution))
+                #     #print sol
+            recursion_level -= 1
+            return FOUND_SOLUTION
+
+        if reinit == True:
+            for neighbour in neighbours[node_id]:
+                node_color[neighbour] = node_color_init[neighbour]
+            
+        if color_of_neighbours_ok(node_id, edges, node_color_sol):
+            hasFoundOneSolution = False
+            n = 1
+            while n <= len(neighbours[node_id]):
+                neighbour = neighbours[node_id][n - 1]
+                #print "n=",n,"/",len(neighbours[node_id]), node_id, neighbour, neighbours[node_id], node_color_sol, recursion_level
+                if (node_color_sol[neighbour] == -1):
+                    node_color_before = node_color[:]
+                    node_color_sol_before = node_color_sol[:]
+                    ret = ortools_solver_v1_diy_recursive(nodes_ordered.index(neighbour), nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
+                    num_color_current = num_color_in_sol(node_color_sol)
+                    # print num_color_current
+                    # print num_color_in_sol(best_solution), best_solution
+                    if  num_color_current >= num_color_in_sol(best_solution):
+                        #print "More colors in current solution than in best one", num_color_current
+                        node_color_sol = node_color_sol_before[:]
+
+                        #print "removing possible color", node_color_sol[neighbour], "for neighbour", neighbour
+                        #recursion_level -= 1
+                        #n -= 1
+                        #node_color[neighbour].RemoveValue(node_color_sol[neighbour])
+                        #node_color_sol[neighbour] = -1
+                        #return False
+                        n += 1
+                        continue
+
+                    nb = node_color_sol.count(-1)
+                    if nb == 0:                        
+                        print "FOUND SOL"
+                        ret = graph_valid(edges, node_color_sol)
+                        if ret != True:
+                            print "INVALID solution", node_color_sol
+
+                        debug_print("solution is complete "+str(node_color_sol))
+                        list_of_solutions.append(node_color_sol[:])
+                        print "found new solution with", num_color_in_sol(list_of_solutions[-1]), " colors"
+                        print node_color_sol            
+                        #print(list_of_solutions[-1])
+                        
+                        if num_color_in_sol(list_of_solutions[-1]) < num_color_in_sol(best_solution):
+                            best_solution = list_of_solutions[-1][:]
+                            print "best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(list_of_solutions[-1]))+" colors"
+                            debug_print("best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(list_of_solutions[-1]))+" colors")
+                            debug_print(list_of_solutions)
+
+                        #reinit
+                        node_color = node_color_before[:]
+                        try:
+                            #node_color[node_id].RemoveValue(list_of_solutions[-1][node_id])
+                            #node_color[nodes_ordered.index(neighbour)].RemoveValue(list_of_solutions[-1][nodes_ordered.index(neighbour)])
+                            node_color[neighbour].RemoveValue(list_of_solutions[-1][neighbour])
+                        except Exception, e:
+                            #print "No more possible value for node", node, node_color[node], list_of_solutions[-1][node]
+                            pass
+                        #print "reinitiliazing possible values for", neighbour, node_color_sol[neighbour],"-> -1"
+                        node_color_sol[neighbour] = -1 # = [-1 for i in range(node_count)]
+                        #print node_color_sol
+
+                        hasFoundOneSolution = FOUND_SOLUTION
+                        n -= 1
+                        #print "iteration",n,"/",len(neighbours[node_id])
+                        #continue
+                        # recursion_level -= 1
+                        # return True
+                    else:
+                        #print "remaining node to find", nb, ret
+                        if ret != False:
+                            print ret
+                            if hasFoundOneSolution != FOUND_SOLUTION:
+                                hasFoundOneSolution = True
+                        #n -= 1
+                        #GF
+                        else:
+                            #print "treatment finished for neighbour", neighbour, "of node_id", node_id, "reinit color", node_color_sol[neighbour]
+                            #node_color_sol[neighbour] = -1
+                            pass
+
+                #print "n=",n,"/",len(neighbours[node_id]),"for node_id", node_id
+                n += 1
+                
+            # We've been through all neighbours of the node
+            recursion_level -= 1
+            #print "coucou", hasFoundOneSolution, node_color_sol.count(-1), "reinitializing value for node_id", node_id
+            if hasFoundOneSolution != False:
+                node_color_sol[node_id] = -1
+            #visited_nodes.pop()
+
+            return False
+            # if node < len(nodes_ordered) - 1:
+            #     return ortools_solver_v1_diy_recursive(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
+            # ret = False
+            # hasFoundOneSolution= False
+            # while ret == True:
+            #     return ret = ortools_solver_v1_diy_recursive(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
+            #     print "ret", ret
+            #     if ret == True:
+            #         hasFoundOneSolution = True
+            #         node_color[node_id].RemoveValue(node_color_sol[node_id])
+            #         print node_color[node_id]
+            # node_color[node_id] = node_color_init[node_id]
+            # return hasFoundOneSolution
+            # else:
+            #     recursion_level -= 1
+            #     return True
+        else:
+            continue        
+
+    print "pouet"
+    recursion_level -= 1
+    return False
+
+def ortools_solver_v1_diy_recursive_greedy(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution):
+    global recursion_level, FOUND_SOLUTION
+    recursion_level += 1
+
+    node_id = nodes_ordered[node]
+    #print "node",node,"node_id",node_id
+    #print "remaining node to find", node_color_sol.count(-1)
+    indentation_per_recursion_level = "    "
+    
+    # Creates the variables.
+    node_color_init = node_color[:]
+    neighbours = [[] for _ in range(node_count)]
+    for e in range(edge_count):
+        neighbours[edges[e][0]].append(edges[e][1])
+        neighbours[edges[e][1]].append(edges[e][0])
+
+    #print("neighbours"+str(neighbours))
+    #print("neighbours"+str(neighbours[node_id]))
+    #debug_print("recursion_level", recursion_level)
+    #print("recursion_level", recursion_level)
+    #print node_id
     
     #print "coin", node_id, node_color[node_id]
     color_domain = []    
@@ -819,8 +1068,8 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
                 node_color[neighbour] = node_color_init[neighbour]
             
         if color_of_neighbours_ok(node_id, edges, node_color_sol):
-            if node < len(nodes_ordered) - 1:                
-                return ortools_solver_v1_diy_recursive(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
+            if node < len(nodes_ordered) - 1:
+                return ortools_solver_v1_diy_recursive_greedy(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
             else:
                 recursion_level -= 1
                 return True
@@ -831,9 +1080,14 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
     return False
 
 def num_color_in_sol(node_solor_sol):
-    return len(set(node_solor_sol))
+    s = set(node_solor_sol)
+    if -1 in s:
+        s.remove(-1)
+    #print s
+    return len(s)
 
 def ortools_solver_v1_diy(node_count, edge_count, edges):
+    global best_solution, list_of_solutions
     solver = pywrapcp.Solver("coloring")
 
     # Creates the variables.
@@ -845,7 +1099,7 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
         # if edges[e][0] in f_neighbours[edges[e][1]]:
         #     print "loop detected between nodes", edges[e][0], edges[e][1]
         # f_neighbours[edges[e][0]].append(edges[e][1])
-        # f_neighbours[edges[e][1]].append(edges[e][0])
+        neighbours[edges[e][1]].append(edges[e][0])
         
     for i in range(len(neighbours)):
         debug_print("neighbours of node #"+str(i)+" are "+str(neighbours[i]))
@@ -863,19 +1117,22 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     #print max(degree_nodes)
     #debug_print(neighbours)
     nc = 10
-    if node_count <= 100:
-        nc = 21
+    if node_count == 50:
+        nc = 8
     else:
-        if node_count == 250:
-            nc = 100
+        if node_count <= 100:
+            nc = 21
         else:
-            if node_count == 500:
-                nc = 19
+            if node_count == 250:
+                nc = 100
             else:
-                if node_count == 1000:
-                    nc = 130
+                if node_count == 500:
+                    nc = 19
                 else:
-                    nc = 150
+                    if node_count == 1000:
+                        nc = 130
+                    else:
+                        nc = 150
     # Find the solution that minimizes the number of colors of the graph
     num_solutions = 0
 
@@ -886,21 +1143,24 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     node_color = [solver.IntVar(0, nc, "node_color%i" % i) for i in range(0, node_count)]
     node_color_sol = [-1 for i in range(node_count)]
     #node_color_sol[0] = 0
-    node_color_sol[nodes_ordered[0]] = 0
-    sol = []
+    #node_color_sol[nodes_ordered[0]] = 0
+    list_of_solutions = []
     best_solution = [i for i in range(node_count)]
 
-    n = -1
+    # n = -1
     print nodes_ordered
-    while n < node_count - 1:
-        n += 1
+    #No need to iterate as this is a recursive function, just need to point it to a first node
+    if True:
+    # while n < node_count - 1:
+        # n += 1
+        n=0
         #node = nodes_ordered[n]
-        #print "loop ", "n=",n,"node=",node
-        #print nodes_ordered[n]
         node_color_before = node_color[:]
         #result = ortools_solver_v1_diy_recursive(node, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
-        result = ortools_solver_v1_diy_recursive(n, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
-
+        result = ortools_solver_v1_diy_recursive(n, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
+        print "loop ", "n=",n,"node=",n, nodes_ordered[n], node_color_sol, neighbours[nodes_ordered[n]]
+        #print "remaining node to find", node_color_sol.count(-1)
+    
         if result == FOUND_SOLUTION:
             #print "2* yessss"
             #if -1 not in node_color_sol:
