@@ -1,12 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Graph Coloring
-# fmYLC, ./data/gc_50_3, solver.py, Coloring Problem 1
-# IkKpq, ./data/gc_70_7, solver.py, Coloring Problem 2
-# pZOjO, ./data/gc_100_5, solver.py, Coloring Problem 3
-# XDQ31, ./data/gc_250_9, solver.py, Coloring Problem 4
-# w7hAO, ./data/gc_500_1, solver.py, Coloring Problem 5
-# tthbm, ./data/gc_1000_5, solver.py, Coloring Problem 6
+# fmYLC, ./data/gc_50_3, solver.py, Coloring Problem 1 => 7
+# 6 0
+# 0 0 0 1 0 2 1 3 2 4 2 3 2 3 1 2 3 5 4 0 4 4 2 2 2 5 2 5 5 4 4 1 0 0 4 2 4 0 5 3 5 4 3 3 1 3 4 1 4 5
+# 7 0
+# 0 4 0 5 5 2 3 1 4 3 5 1 4 1 6 2 1 2 4 0 0 3 6 4 2 0 2 3 5 5 0 3 0 0 3 2 4 4 2 1 4 5 1 1 4 1 5 2 5 3
+# IkKpq, ./data/gc_70_7, solver.py, Coloring Problem 2 =>19
+# 19 0
+# 0 4 4 10 9 11 2 7 1 2 16 7 0 15 9 1 16 12 11 8 17 14 9 6 3 9 5 12 3 5 15 13 0 7 5 17 17 1 6 10 12 3 10 16 3 13 18 18 13 11 8 8 1 12 2 0 15 11 18 10 4 2 3 6 4 4 14 15 13 5
+# pZOjO, ./data/gc_100_5, solver.py, Coloring Problem 3 => 19
+# 19 0
+# 9 3 11 5 0 8 16 8 9 3 15 1 1 5 11 2 4 13 8 15 6 3 12 11 4 17 7 9 14 0 1 1 13 6 4 7 11 14 16 6 2 11 10 15 7 12 12 12 10 8 7 2 15 14 4 8 18 5 6 5 4 9 9 10 10 4 3 17 18 16 4 17 7 0 13 12 8 2 14 3 2 11 16 6 8 13 15 1 2 14 1 0 0 9 18 5 3 12 16 6
+# XDQ31, ./data/gc_250_9, solver.py, Coloring Problem 4 => 95 93
+# found new solution with 93  colors 75 ou 11 avant le dernier
+# [90, 42, 18, 48, 69, 30, 25, 92, 41, 11, 45, 3, 12, 90, 55, 60, 60, 50, 79, 31, 9, 17, 68, 16, 7, 49, 1, 61, 20, 50, 11, 77, 26, 13, 51, 32, 52, 70, 27, 23, 54, 28, 78, 69, 24, 23, 27, 57, 52, 41, 25, 42, 48, 34, 83, 20, 36, 40, 49, 80, 8, 83, 61, 71, 48, 43, 62, 44, 16, 6, 14, 21, 53, 54, 10, 55, 87, 56, 31, 55, 6, 67, 70, 32, 4, 33, 58, 34, 71, 24, 84, 85, 8, 84, 43, 44, 21, 43, 15, 26, 63, 29, 0, 27, 76, 44, 81, 82, 33, 59, 8, 45, 72, 28, 75, 9, 38, 49, 89, 80, 7, 88, 46, 16, 79, 2, 9, 30, 17, 61, 86, 28, 32, 59, 80, 13, 22, 46, 73, 53, 23, 57, 74, 64, 69, 60, 88, 27, 65, 65, 10, 4, 46, 19, 18, 12, 82, 51, 63, 71, 11, 65, 74, 58, 73, 64, 15, 52, 2, 24, 69, 64, 19, 74, 0, 78, 18, 75, 70, 30, 22, 50, 21, 10, 26, 35, 47, 63, 66, 46, 19, 86, 67, 3, 56, 35, 36, 77, 38, 33, 29, 14, 66, 68, 42, 58, 22, 53, 87, 81, 6, 76, 4, 37, 88, 5, 72, 91, 82, 37, 5, 39, 62, 68, 54, 37, 67, 34, 85, 72, 89, 20, 1, 47, 14, 13, 47, 87, 0, 38, 57, 29, 41, 36, 39, 6, 40, 60, 59, 17]
+# w7hAO, ./data/gc_500_1, solver.py, Coloring Problem 5 => 18
+# 18 0
+# 9 1 2 13 0 5 6 10 12 5 6 6 7 3 10 1 14 6 8 7 1 0 4 8 6 3 6 2 2 3 16 14 4 11 1 10 4 12 7 1 11 11 5 10 9 1 3 9 3 10 9 11 1 7 8 7 9 7 4 12 15 3 0 0 13 5 2 5 2 9 6 16 16 2 8 15 8 15 4 3 1 1 2 15 6 15 12 9 13 9 14 7 2 10 5 12 8 7 8 15 3 7 14 7 5 7 10 8 14 6 3 5 0 14 8 2 8 9 3 4 11 10 1 10 4 0 6 8 7 8 2 15 4 1 3 15 5 4 8 14 7 4 2 5 12 10 4 13 11 5 0 7 8 8 13 2 11 2 2 7 5 1 0 6 9 11 5 2 6 11 10 15 7 13 16 6 16 9 1 16 7 16 0 11 5 4 13 12 7 4 0 14 11 0 3 2 4 0 2 12 16 13 1 10 12 2 4 13 7 0 1 16 9 7 6 7 12 7 5 8 4 2 11 11 6 2 1 14 9 2 13 11 6 6 0 5 8 10 12 4 0 11 3 6 5 9 3 10 14 3 1 8 2 4 13 1 12 1 10 3 2 4 12 5 7 0 3 13 10 4 9 0 10 2 8 0 1 1 2 11 8 0 15 3 6 4 2 3 13 6 1 9 13 6 10 12 7 8 1 0 1 3 13 4 11 17 9 3 9 10 5 5 12 11 13 12 11 5 4 8 0 3 1 1 12 0 6 13 13 6 10 0 3 15 9 10 4 4 10 6 10 9 11 3 5 13 6 9 5 1 5 5 11 10 13 12 8 7 12 6 7 9 14 3 5 10 8 8 16 4 9 6 0 10 5 8 6 15 12 11 10 11 13 8 5 15 6 7 4 9 3 16 4 11 7 13 3 9 0 5 1 3 3 6 9 11 0 0 6 6 0 1 11 7 2 0 9 7 4 12 12 7 7 8 12 13 7 10 9 8 4 14 4 14 11 1 14 1 0 2 12 5 4 11 0 15 15 12 10 11 14 8 11 8 3 13 2 5 15 1 1 7 3 8 11 5 5 15 16 7 3 2 11 13 7 9 14 5 1 2 8 8 5 5 6 0 3 14 5 14 14 3 14 7 15 10 2 3 8 2
+# tthbm, ./data/gc_1000_5, solver.py, Coloring Problem 6 => echec
 # fmYLC,    8,   6
 # IkKpq,   20,  17
 # pZOjO,   21,  16
@@ -18,8 +30,11 @@ from ortools.constraint_solver import pywrapcp
 from ortools.linear_solver import pywraplp
 from operator import itemgetter
 import random
+import sys
 
+sys.setrecursionlimit(100000)
 FOUND_SOLUTION = 2
+
 # https://github.com/google/or-tools/blob/master/examples/python/coloring_ip.py
 def ortools_alternate_solver(node_count, edge_count, edges):
     solver = pywrapcp.Solver("coloring")
@@ -1025,8 +1040,9 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
 
     return False
 
-def ortools_solver_v1_diy_recursive_greedy(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution):
-    global recursion_level, FOUND_SOLUTION
+def ortools_solver_v1_diy_recursive_greedy(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol):
+    global recursion_level, FOUND_SOLUTION, best_solution, list_of_solutions, visited_nodes
+    global recursion_stack
     recursion_level += 1
 
     node_id = nodes_ordered[node]
@@ -1093,7 +1109,7 @@ def ortools_solver_v1_diy_recursive_greedy(node, nodes_ordered, node_count, edge
                 if node_color_sol[edges[0][0]] >= color:
                     continue
                 #Skip previously found combination for first edge
-                if combination_already_found(sol, edges, node_color_sol, color) == True:
+                if combination_already_found(list_of_solutions, edges, node_color_sol, color) == True:
                     continue
 
         if node_color_sol[node_id] != color:
@@ -1137,7 +1153,7 @@ def ortools_solver_v1_diy_recursive_greedy(node, nodes_ordered, node_count, edge
             
         if color_of_neighbours_ok(node_id, edges, node_color_sol):
             if node < len(nodes_ordered) - 1:
-                return ortools_solver_v1_diy_recursive_greedy(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
+                return ortools_solver_v1_diy_recursive_greedy(node + 1, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
             else:
                 recursion_level -= 1
                 return True
@@ -1192,18 +1208,17 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
         nc = 8
     else:
         if node_count <= 100:
-            nc = 21
+            nc = 19
         else:
             if node_count == 250:
-                nc = 100
+                nc = 95
             else:
                 if node_count == 500:
                     nc = 19
                 else:
                     if node_count == 1000:
-                        nc = 130
-                    else:
-                        nc = 150
+                        nc = 124
+                        
     # Find the solution that minimizes the number of colors of the graph
     num_solutions = 0
 
@@ -1221,6 +1236,11 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     if True:
         #print "toto"
         n = -1
+        if node_count == 250:
+            n = 237
+        # else:
+        #     if node_count == 50:
+        #         n = -1
         #print nodes_ordered
         #No need to iterate as this is a recursive function, just need to point it to a first node
         #if True:
@@ -1234,17 +1254,20 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
             #node_color_before = node_color[:]
             #result = ortools_solver_v1_diy_recursive(node, node_count, edge_count, edges, node_color, node_color_sol, sol, best_solution)
             #print "loop ", "n=",n,nodes_ordered[n], node_color_sol, neighbours[n]
-            result = ortools_solver_v1_diy_recursive(n, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
-            #print "loop ", "n=",n,nodes_ordered[n], node_color_sol, neighbours[n]
+            if node_count == 2000:
+                result = ortools_solver_v1_diy_recursive_greedy(n, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
+            else:
+                result = ortools_solver_v1_diy_recursive(n, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol)
+                #print "loop ", "n=",n,nodes_ordered[n], node_color_sol, neighbours[n]
             #print "remaining node to find", node_color_sol.count(-1)
             
             if node_count == 50 and num_color_in_sol(best_solution) == 7:
                 break
-            if node_count == 70 and num_color_in_sol(best_solution) == 19:
+            if node_count == 70 and num_color_in_sol(best_solution) == 17:
                 break
             if node_count == 100 and num_color_in_sol(best_solution) == 19:
                 break
-            if node_count == 250 and num_color_in_sol(best_solution) == 95:
+            if node_count == 250 and num_color_in_sol(best_solution) == 93:
                 break
             if node_count == 500 and num_color_in_sol(best_solution) == 18:
                 break
@@ -1259,16 +1282,16 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
                     print "INVALID solution", node_color_sol
 
                 debug_print("solution is complete "+str(node_color_sol))
-                sol.append(node_color_sol[:])
-                print "found new solution with", num_color_in_sol(sol[-1]), " colors"
+                list_of_solutions.append(node_color_sol[:])
+                #print "found new solution with", num_color_in_sol(list_of_solutions[-1]), " colors"
                 print node_color_sol            
                 #debug_print(sol[-1])
 
-                if num_color_in_sol(sol[-1]) < num_color_in_sol(best_solution):
-                    best_solution = sol[-1]
-                    #print "best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(sol[-1]))+" colors"
-                    debug_print("best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(sol[-1]))+" colors")
-                    debug_print(sol)
+                if num_color_in_sol(list_of_solutions[-1]) < num_color_in_sol(best_solution):
+                    best_solution = list_of_solutions[-1]
+                    print "best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(sol[-1]))+" colors"
+                    debug_print("best solution is now "+str(best_solution)+" with "+str(num_color_in_sol(list_of_solutions[-1]))+" colors")
+                    debug_print(list_of_solutions)
 
                 #reinit
                 node_color = node_color_before[:]
@@ -1313,8 +1336,8 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     else:
         debug_print("Solution is valid")
         
-    # print "Solutions found:", num_solutions
-    # print "Time:", solver.WallTime(), "ms"
+    print "Solutions found:", num_solutions
+    print "Time:", solver.WallTime(), "ms"
     
     return num_colors, solution[0]
 
@@ -1351,7 +1374,7 @@ def ortools_solver_v1(node_count, edge_count, edges):
     num_solutions = 0
     num_colors = 0
     while solver.NextSolution():
-        print "Time:", solver.WallTime(), "ms"
+        # print "Time:", solver.WallTime(), "ms"
         solution = []
 
         # Displays the solution just computed.
@@ -1386,7 +1409,10 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
-    solvers = [ortools_solver_v1_diy]#, ortools_solver_v1, ortools_solver_v2]#, ortools_linear_solver, ortools_alternate_solver]
+    if node_count <= 20:
+        solvers = [ortools_solver_v1, ortools_solver_v1_diy]
+    else:
+        solvers = [ortools_solver_v1_diy]#, ortools_solver_v1, ortools_solver_v2]#, ortools_linear_solver, ortools_alternate_solver]
     for solver in solvers:
         #print solver
         # build a trivial solution
@@ -1422,3 +1448,10 @@ if __name__ == '__main__':
         print(solve_it(input_data))
     else:
         print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/gc_4_1)')
+
+
+# 6 0
+# 0 0 0 1 0 2 1 3 2 4 2 3 2 3 1 2 3 5 4 0 4 4 2 2 2 5 2 5 5 4 4 1 0 0 4 2 4 0 5 3 5 4 3 3 1 3 4 1 4 5
+# 0 1 2 3 4 5 6 7 8 9 10111213141516171819202122232425262728293031323334353637383940414243444546474849
+# 0 4 0 5 5 2 3 1 4 3 5 1 4 1 6 2 1 2 4 0 0 3 6 4 2 0 2 3 5 5 0 3 0 0 3 2 4 4 2 1 4 5 1 1 4 1 5 2 5 3
+# 7 0
