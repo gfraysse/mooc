@@ -6,19 +6,25 @@
 # 0 0 0 1 0 2 1 3 2 4 2 3 2 3 1 2 3 5 4 0 4 4 2 2 2 5 2 5 5 4 4 1 0 0 4 2 4 0 5 3 5 4 3 3 1 3 4 1 4 5
 # 7 0
 # 0 4 0 5 5 2 3 1 4 3 5 1 4 1 6 2 1 2 4 0 0 3 6 4 2 0 2 3 5 5 0 3 0 0 3 2 4 4 2 1 4 5 1 1 4 1 5 2 5 3
+
 # IkKpq, ./data/gc_70_7, solver.py, Coloring Problem 2 =>19
 # 19 0
 # 0 4 4 10 9 11 2 7 1 2 16 7 0 15 9 1 16 12 11 8 17 14 9 6 3 9 5 12 3 5 15 13 0 7 5 17 17 1 6 10 12 3 10 16 3 13 18 18 13 11 8 8 1 12 2 0 15 11 18 10 4 2 3 6 4 4 14 15 13 5
+
 # pZOjO, ./data/gc_100_5, solver.py, Coloring Problem 3 => 19
 # 19 0
 # 9 3 11 5 0 8 16 8 9 3 15 1 1 5 11 2 4 13 8 15 6 3 12 11 4 17 7 9 14 0 1 1 13 6 4 7 11 14 16 6 2 11 10 15 7 12 12 12 10 8 7 2 15 14 4 8 18 5 6 5 4 9 9 10 10 4 3 17 18 16 4 17 7 0 13 12 8 2 14 3 2 11 16 6 8 13 15 1 2 14 1 0 0 9 18 5 3 12 16 6
+
 # XDQ31, ./data/gc_250_9, solver.py, Coloring Problem 4 => 95 93
 # found new solution with 93  colors 75 ou 11 avant le dernier
 # [90, 42, 18, 48, 69, 30, 25, 92, 41, 11, 45, 3, 12, 90, 55, 60, 60, 50, 79, 31, 9, 17, 68, 16, 7, 49, 1, 61, 20, 50, 11, 77, 26, 13, 51, 32, 52, 70, 27, 23, 54, 28, 78, 69, 24, 23, 27, 57, 52, 41, 25, 42, 48, 34, 83, 20, 36, 40, 49, 80, 8, 83, 61, 71, 48, 43, 62, 44, 16, 6, 14, 21, 53, 54, 10, 55, 87, 56, 31, 55, 6, 67, 70, 32, 4, 33, 58, 34, 71, 24, 84, 85, 8, 84, 43, 44, 21, 43, 15, 26, 63, 29, 0, 27, 76, 44, 81, 82, 33, 59, 8, 45, 72, 28, 75, 9, 38, 49, 89, 80, 7, 88, 46, 16, 79, 2, 9, 30, 17, 61, 86, 28, 32, 59, 80, 13, 22, 46, 73, 53, 23, 57, 74, 64, 69, 60, 88, 27, 65, 65, 10, 4, 46, 19, 18, 12, 82, 51, 63, 71, 11, 65, 74, 58, 73, 64, 15, 52, 2, 24, 69, 64, 19, 74, 0, 78, 18, 75, 70, 30, 22, 50, 21, 10, 26, 35, 47, 63, 66, 46, 19, 86, 67, 3, 56, 35, 36, 77, 38, 33, 29, 14, 66, 68, 42, 58, 22, 53, 87, 81, 6, 76, 4, 37, 88, 5, 72, 91, 82, 37, 5, 39, 62, 68, 54, 37, 67, 34, 85, 72, 89, 20, 1, 47, 14, 13, 47, 87, 0, 38, 57, 29, 41, 36, 39, 6, 40, 60, 59, 17]
+
 # w7hAO, ./data/gc_500_1, solver.py, Coloring Problem 5 => 18
 # 18 0
 # 9 1 2 13 0 5 6 10 12 5 6 6 7 3 10 1 14 6 8 7 1 0 4 8 6 3 6 2 2 3 16 14 4 11 1 10 4 12 7 1 11 11 5 10 9 1 3 9 3 10 9 11 1 7 8 7 9 7 4 12 15 3 0 0 13 5 2 5 2 9 6 16 16 2 8 15 8 15 4 3 1 1 2 15 6 15 12 9 13 9 14 7 2 10 5 12 8 7 8 15 3 7 14 7 5 7 10 8 14 6 3 5 0 14 8 2 8 9 3 4 11 10 1 10 4 0 6 8 7 8 2 15 4 1 3 15 5 4 8 14 7 4 2 5 12 10 4 13 11 5 0 7 8 8 13 2 11 2 2 7 5 1 0 6 9 11 5 2 6 11 10 15 7 13 16 6 16 9 1 16 7 16 0 11 5 4 13 12 7 4 0 14 11 0 3 2 4 0 2 12 16 13 1 10 12 2 4 13 7 0 1 16 9 7 6 7 12 7 5 8 4 2 11 11 6 2 1 14 9 2 13 11 6 6 0 5 8 10 12 4 0 11 3 6 5 9 3 10 14 3 1 8 2 4 13 1 12 1 10 3 2 4 12 5 7 0 3 13 10 4 9 0 10 2 8 0 1 1 2 11 8 0 15 3 6 4 2 3 13 6 1 9 13 6 10 12 7 8 1 0 1 3 13 4 11 17 9 3 9 10 5 5 12 11 13 12 11 5 4 8 0 3 1 1 12 0 6 13 13 6 10 0 3 15 9 10 4 4 10 6 10 9 11 3 5 13 6 9 5 1 5 5 11 10 13 12 8 7 12 6 7 9 14 3 5 10 8 8 16 4 9 6 0 10 5 8 6 15 12 11 10 11 13 8 5 15 6 7 4 9 3 16 4 11 7 13 3 9 0 5 1 3 3 6 9 11 0 0 6 6 0 1 11 7 2 0 9 7 4 12 12 7 7 8 12 13 7 10 9 8 4 14 4 14 11 1 14 1 0 2 12 5 4 11 0 15 15 12 10 11 14 8 11 8 3 13 2 5 15 1 1 7 3 8 11 5 5 15 16 7 3 2 11 13 7 9 14 5 1 2 8 8 5 5 6 0 3 14 5 14 14 3 14 7 15 10 2 3 8 2
+
 # tthbm, ./data/gc_1000_5, solver.py, Coloring Problem 6 => echec
+
 # fmYLC,    8,   6
 # IkKpq,   20,  17
 # pZOjO,   21,  16
@@ -26,11 +32,16 @@
 # w7hAO,   18,  16
 # tthbm, 124, 100
 
+PROFILER_ON = False
+
 from ortools.constraint_solver import pywrapcp
 from ortools.linear_solver import pywraplp
 from operator import itemgetter
 import random
 import sys
+
+if PROFILER_ON == True:
+    import cProfile, pstats, StringIO
 
 sys.setrecursionlimit(100000)
 FOUND_SOLUTION = 2
@@ -452,6 +463,7 @@ def ortools_solver_v2(node_count, edge_count, edges):
     
     return num_colors, solution
 
+# The exercise gc_250_9 does not finish if this function always returns True
 def graph_valid(edges, node_color_sol):
     if node_color_sol == []:
         return False
@@ -727,12 +739,58 @@ def color_of_neighbours_ok(node_id, edges, node_color_sol):
 
     return True
 
+def create_neighbour_array(node_count, edge_count, edges, node_color_sol):
+    global neighbours, degree_nodes
+    neighbours = [[] for _ in range(node_count)]
+    degree_nodes = [0 for _ in range(node_count)]
+    for e in range(edge_count):
+        if node_color_sol[edges[e][0]] == -1:
+            neighbours[edges[e][0]].append(edges[e][1])
+            degree_nodes[edges[e][0]] += 1
+            
+        if node_color_sol[edges[e][1]] == -1:            
+            neighbours[edges[e][1]].append(edges[e][0])
+            degree_nodes[edges[e][1]] += 1
+            
+    #print("neighbours"+str(neighbours))
+    # # Sort neighbours by degrees (number of adjacent nodes)
+    neighbours_unordered = [i for i in range(node_count)]
+    for n in range(len(neighbours)):
+        decorated = []
+        #print n,neighbours[n]
+        for i in range(len(neighbours[n])):
+            decorated.append([neighbours[n][i], degree_nodes[neighbours[n][i]]])
+        decorated.sort(key=itemgetter(1), reverse=True)
+        neighbours[n] = [i for i, _ in decorated]                         
+        #print n,neighbours[n]
+
+    #print("neighbours"+str(neighbours))
+    #print("neighbours"+str(neighbours[node_id]))
+    return neighbours, degree_nodes
+
+def create_neighbour_array_for_node(node_id, node_count, edge_count, edges, node_color_sol):
+    neighbours = [] 
+    degree = 0
+    for e in range(edge_count):
+        if edges[e][0] == node_id and node_color_sol[edges[e][0]] == -1 :
+            neighbours.append(edges[e][1])
+            degree += 1
+            
+        if edges[e][1] == node_id and node_color_sol[edges[e][1]] == -1:            
+            neighbours.append(edges[e][0])
+            degree += 1
+            
+    #print("neighbours"+str(neighbours))
+    #print("neighbours"+str(neighbours[node_id]))
+    return neighbours, degree
+
 best_solution = []
 list_of_solutions = []
 visited_nodes = set([])
 recursion_stack = []
 def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count, edges, node_color, node_color_sol):
     global recursion_level, FOUND_SOLUTION, best_solution, list_of_solutions, visited_nodes
+    global neighbours, degree_nodes
     global recursion_stack
     recursion_level += 1
 
@@ -748,31 +806,9 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
     
     # Creates the variables.
     node_color_init = node_color[:]
-    neighbours = [[] for _ in range(node_count)]
-    for e in range(edge_count):
-        neighbours[edges[e][0]].append(edges[e][1])
-        neighbours[edges[e][1]].append(edges[e][0])
-
-    # Sort neighbours by degrees (number of adjacent nodes)
-    degree_nodes = [0 for _ in range(node_count)]
-    for i in range(len(neighbours)):
-        #debug_print("neighbours of node #"+str(i)+" are "+str(neighbours[i]))
-        degree_nodes[i] += len(neighbours[i])
-        #print "degree of node",i,"is",degree_nodes[i]
-
-    #print("neighbours"+str(neighbours))
-    neighbours_unordered = [i for i in range(node_count)]
-    for n in range(len(neighbours)):
-        decorated = []
-        #print n,neighbours[n]
-        for i in range(len(neighbours[n])):
-            decorated.append([neighbours[n][i], degree_nodes[neighbours[n][i]]])
-        decorated.sort(key=itemgetter(1), reverse=True)
-        neighbours[n] = [i for i, _ in decorated]                         
-        #print n,neighbours[n]
-
-    #print("neighbours"+str(neighbours))
-    #print("neighbours"+str(neighbours[node_id]))
+    #neighbours, degree_nodes = create_neighbour_array(node_count, edge_count, edges, node_color_sol)
+    #neighbours, degree_nodes = create_neighbour_array_for_node(node_id, node_count, edge_count, edges, node_color_sol)
+    
     #debug_print("recursion_level", recursion_level)
     #print("recursion_level", recursion_level)
     #print node_id
@@ -847,7 +883,7 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
                 continue
             except Exception, e:
                 #print node_color_sol, node_color
-                print "No more possible value for node_id", node_id
+                #print "No more possible value for node_id", node_id
                 recursion_level -= 1
                 recursion_stack.pop()
                 #print "recursion_stack pop   ", recursion_stack,"len=",len(recursion_stack)
@@ -874,13 +910,16 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
 
         if reinit == True:
             for neighbour in neighbours[node_id]:
+            #for neighbour in neighbours:
                 node_color[neighbour] = node_color_init[neighbour]
             
         if color_of_neighbours_ok(node_id, edges, node_color_sol):
             hasFoundOneSolution = False
             n = 1
             while n <= len(neighbours[node_id]):
+            #while n <= len(neighbours):
                 neighbour = neighbours[node_id][n - 1]
+                #neighbour = neighbours[n - 1]
                 if node_color_sol.count(-1) == 1:
                     #print "only one missing a"
                     missing = node_color_sol.index(-1)
@@ -893,6 +932,7 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
                         pass
                 # If neighbour has not already been passed through
                 #print "n=",n,"/",len(neighbours[node_id]), node_id, neighbour, neighbours[node_id], node_color_sol.count(-1),"/",node_count, "missing "+str(node_color_sol.index(-1)) if node_color_sol.count(-1) == 1 else "N/A",node_color_sol, recursion_level
+                #print "n=",n,"/",len(neighbours[node_id]), node_id, neighbour, node_color_sol.count(-1),"/",node_count, "missing "+str(node_color_sol.index(-1)) if node_color_sol.count(-1) == 1 else "N/A", recursion_level
                 if (node_color_sol[neighbour] == -1):
                     #print "ho", node_color_sol
                     node_color_sol_before = [-1 for _ in range(node_count)]
@@ -1033,10 +1073,9 @@ def ortools_solver_v1_diy_recursive(node, nodes_ordered, node_count, edge_count,
             #print "prout"
             continue        
 
-    print "pouet"
     recursion_level -= 1
     recursion_stack.pop()
-    print "recursion_stack pop   ", recursion_stack,"len=",len(recursion_stack)
+    #print "recursion_stack pop   ", recursion_stack,"len=",len(recursion_stack)
 
     return False
 
@@ -1170,25 +1209,32 @@ def num_color_in_sol(node_solor_sol):
     #print s
     return len(s)
 
+neighbours = []
+degree_nodes = []
 def ortools_solver_v1_diy(node_count, edge_count, edges):
     global best_solution, list_of_solutions
+    global neighbours, degree_nodes
     solver = pywrapcp.Solver("coloring")
+    
+    node_color_sol = [-1 for i in range(node_count)]
 
     # Creates the variables.
-    degree_nodes = [0 for _ in range(node_count)]
-    neighbours = [[] for _ in range(node_count)]
-    f_neighbours = [[] for _ in range(node_count)]
-    for e in range(edge_count):
-        neighbours[edges[e][0]].append(edges[e][1]) 
-        # if edges[e][0] in f_neighbours[edges[e][1]]:
-        #     print "loop detected between nodes", edges[e][0], edges[e][1]
-        # f_neighbours[edges[e][0]].append(edges[e][1])
-        neighbours[edges[e][1]].append(edges[e][0])
+    neighbours, degree_nodes = create_neighbour_array(node_count, edge_count, edges, node_color_sol)
+
+    # degree_nodes = [0 for _ in range(node_count)]
+    # neighbours = [[] for _ in range(node_count)]
+    # #f_neighbours = [[] for _ in range(node_count)]
+    # for e in range(edge_count):
+    #     neighbours[edges[e][0]].append(edges[e][1]) 
+    #     # if edges[e][0] in f_neighbours[edges[e][1]]:
+    #     #     print "loop detected between nodes", edges[e][0], edges[e][1]
+    #     # f_neighbours[edges[e][0]].append(edges[e][1])
+    #     neighbours[edges[e][1]].append(edges[e][0])
         
-    for i in range(len(neighbours)):
-        debug_print("neighbours of node #"+str(i)+" are "+str(neighbours[i]))
-        degree_nodes[i] += len(neighbours[i])
-        #print "degree of node",i,"is",degree_nodes[i]
+    # for i in range(len(neighbours)):
+    #     debug_print("neighbours of node #"+str(i)+" are "+str(neighbours[i]))
+    #     degree_nodes[i] += len(neighbours[i])
+    #     #print "degree of node",i,"is",degree_nodes[i]
 
     nodes_unordered = [i for i in range(node_count)]
     decorated = []
@@ -1197,12 +1243,12 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     decorated.sort(key=itemgetter(1), reverse=True)
     nodes_ordered = [i for i, _ in decorated]                         
 
-    # nodes_ordered = [i for i in range(node_count)]
-    # random.shuffle(nodes_ordered)
+    # # nodes_ordered = [i for i in range(node_count)]
+    # # random.shuffle(nodes_ordered)
 
-    #print neighbours
-    #print max(degree_nodes)
-    #debug_print(neighbours)
+    # #print neighbours
+    # #print max(degree_nodes)
+    # #debug_print(neighbours)
     nc = 10
     if node_count == 50:
         nc = 8
@@ -1227,7 +1273,6 @@ def ortools_solver_v1_diy(node_count, edge_count, edges):
     #print "remaining values for node_color are ", node_color[0]
     #for n in range(node_count):
     node_color = [solver.IntVar(0, nc, "node_color%i" % i) for i in range(0, node_count)]
-    node_color_sol = [-1 for i in range(node_count)]
     #node_color_sol[0] = 0
     #node_color_sol[nodes_ordered[0]] = 0
     list_of_solutions = []
@@ -1445,7 +1490,21 @@ if __name__ == '__main__':
         file_location = sys.argv[1].strip()
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
-        print(solve_it(input_data))
+
+        if PROFILER_ON == True:
+            pr = cProfile.Profile()
+            pr.enable()
+        try:
+            print(solve_it(input_data))
+        except KeyboardInterrupt:
+            print "Ctrl-C detected, exiting..."
+        if PROFILER_ON == True:
+            pr.disable()
+            s = StringIO.StringIO()
+            sortby = 'cumulative'
+            ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+            ps.print_stats()
+            print s.getvalue()           
     else:
         print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/gc_4_1)')
 
