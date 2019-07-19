@@ -2,7 +2,7 @@ The itertools module standardizes a core set of fast, memory efficient tools tha
 
 To read more about the functions in this module, check out their documentation [here](https://docs.python.org/2/library/itertools.html)
 
-You are given a list of *N* lowercase English letters. For a given integer *K*, you can select any *K* indices (assume -based indexing) with a uniform probability from the list.
+You are given a list of *N* lowercase English letters. For a given integer *K*, you can select any *K* indices (assume 1-based indexing) with a uniform probability from the list.
 
 Find the probability that at least one of the *K* indices selected will contain the letter: '*a*'.
 
