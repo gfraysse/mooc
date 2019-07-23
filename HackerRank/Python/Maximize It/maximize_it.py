@@ -62,11 +62,11 @@ for i in range(K):
     N.append(l[0])
     orig.append(l[1:])
     orig[-1].sort()
-    L.append(map(lambda x:(x * x) % M, orig[-1]))
+    L.append(map(lambda x:((x % M) * (x % M)) % M, orig[-1]))
 
 print "K", K, "M", M, "N",  N, "L", L, "orig", orig
 
-# Algorithme glouton
+# Greedy Algorithm
 # TOTAL_MAX = 0
 # for i in range(len(K)):
 #     total = 0
@@ -78,9 +78,20 @@ print "K", K, "M", M, "N",  N, "L", L, "orig", orig
 #     total += m * m #(orig[i][idx] * orig[i][idx]) % M
 
 # Algorithme ameliore
+results = [[] for _ in range(K)]
 total = 0
-for i in range(len(N)):
-    m = max(L[i])
+for j in range(N[0]):
+    # print "0",j
+    results[0].append(L[0][j])
+# print "results",results
+for i in range(1, K):
+    for j in range(N[i]):
+        # print "i=",i,"j=",j
+        # print results[i-1]
+        for r in results[i - 1]:
+            #print "r=",r
+            results[i].append(r + L[i][j])
+            #m = max(L[i])
     # idx = 0
     # print "i", i, "L", L[i], "m", m
     # for j in range(len(L[i]) - 1, -1, -1):
@@ -88,7 +99,10 @@ for i in range(len(N)):
     #     if L[i][j] == m:
     #         idx = j
     #         break
-    total += m #(orig[i][idx] * orig[i][idx]) % M
+    #total += m #(orig[i][idx] * orig[i][idx]) % M
     #print m, idx, total
 
+#print results
+resulat_arr = map(lambda x:x%M, results[-1])
+total = max(resulat_arr)
 print total % M
