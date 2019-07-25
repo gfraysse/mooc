@@ -21,7 +21,17 @@ void matrixRotation(std::vector<std::vector<int>> matrix, int r) {
     size_t rows = matrix.size();
     size_t columns = matrix[0].size();
     vector<vector<int>> matrix2;
-    int r2 = r % ((rows -1) * columns);
+    int r2 = r; // timeout if no modulo
+    if (r%2 == 0) {
+	// r2 = r % ((rows - 1 ) * 2 + 2 * (columns - 1)); KO for 2 tests
+	r2 = r % ((rows -1) * columns);
+    } 
+    // int modulo = 1;
+    // for (int i = 0; i < min(rows, columns) / 2; ++i) {
+    // 	cout << "modulo=" << modulo << endl;
+    // 	modulo *= rows - i + columns - i;
+    // }
+    //cout << "modulo=" << modulo << endl;
     matrix2.resize(rows);
     
     //cout << "r2=" << r2 << endl;
