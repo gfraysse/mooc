@@ -14,12 +14,15 @@ p = zeros(m, 1);
 %               your learned logistic regression parameters. 
 %               You should set p to a vector of 0's and 1's
 %
-
-
-
-
-
-
+threshold = 0.5
+h = sum(theta' .* X, 2); % 2 indicated to sum each row
+s = sigmoid(h);
+%s = sigmoid(theta' .* X)
+for i = 1:m
+  if s(i) >= threshold
+    p(i) = 1;
+  endif
+endfor
 
 % =========================================================================
 
