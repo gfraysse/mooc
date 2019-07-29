@@ -21,34 +21,28 @@ void matrixRotation(std::vector<std::vector<int>> matrix, int r) {
     size_t rows = matrix.size();
     size_t columns = matrix[0].size();
     vector<vector<int>> matrix2;
-    int r2 = r; // timeout if no modulo
-    if (r%2 == 0) {
-	// r2 = r % ((rows - 1 ) * 2 + 2 * (columns - 1)); KO for 2 tests
-	r2 = r % ((rows -1) * columns);
-    } 
-    // int modulo = 1;
-    // for (int i = 0; i < min(rows, columns) / 2; ++i) {
-    // 	cout << "modulo=" << modulo << endl;
-    // 	modulo *= rows - i + columns - i;
-    // }
-    //cout << "modulo=" << modulo << endl;
-    matrix2.resize(rows);
+    int r2 = r; 
+    matrix2 = matrix;    
     
-    //cout << "r2=" << r2 << endl;
-    for (unsigned int r3 = 0; r3 < r2; ++r3) {
-	// 3 tests were failing due to the number of iterations when
-	// row /2 only was considered. min(rows,columns) / 2
-	for (size_t k = 0; k < min(rows, columns) / 2; ++k) {
-	    //cout << "k=" << k << endl;
+    // 3 tests were failing due to the number of iterations when
+    // row /2 only was considered. min(rows,columns) / 2
+    for (size_t k = 0; k < min(rows, columns) / 2; ++k) {
+	// 13/13 tests OK
+	int modulo = ((rows - 2 * k - 1 ) * 2 + 2 * (columns - 2 * k - 1));
+	// 7/13 tests fail 1, 4, 5, 6, 7, 8, 9
+	// int modulo = ((rows - k - 1 ) * 2 + 2 * (columns - k - 1));
+	// 6/13 tests fail 1, 5, 6, 7, 8, 9
+	// int modulo = ((rows - k - 1) * (columns - k));
+	// if no modulo tests 6, 7, 8 ,9 fail "Terminated due to timeout"
+ 	r2 = r % modulo;
+	for (unsigned int r3 = 0; r3 < r2; ++r3) {
 	    for (size_t x = k; x < rows - k; ++x) {
-		//cout << "  x=" << x << endl;	
 		matrix2[x].resize(columns);
 		if(x != k && x != rows - k - 1) {
 		    matrix2[x][k] = matrix[x - 1][k];
 		    matrix2[x][columns - k - 1] = matrix[x + 1][columns - k - 1];
 		} else {
 		    for (size_t y = k; y < columns - k; ++y) {
-			//cout << "    y=" << y << endl;	
 			if (x == k) {
 			    if (y != columns - k- 1) {
 				// Possible optimization don't go one
@@ -65,17 +59,14 @@ void matrixRotation(std::vector<std::vector<int>> matrix, int r) {
 			    } else {
 				matrix2[x][y] = matrix[x - 1][y];			
 			    }
-			} 
+			}
 		    }
 		}
 	    }
-	}
-	
-	matrix = matrix2;
-	// displayMatrix(matrix);
+	    matrix = matrix2;
+	}	
     }
-
-    displayMatrix(matrix);
+    displayMatrix(matrix2);
 
 }
 
