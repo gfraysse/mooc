@@ -61,6 +61,8 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+
+% Part 1: Feedforward the neural network and return the cost in the variable J.
 a1 = [ones(m, 1) X];
 %a1 [5000x401]
 %Theta1 [25x401]
@@ -95,30 +97,46 @@ J = J + (lambda / (2 * m)) * (S2+S3);
 %g2(1) = 0;
 %grad = g1 .+ g2';
 
+% Part 2: Backpropagation algorithm
+for t = 1:m
+  a1 = X(t,:);
+  a1 = [1 a1]; % 1x401
+  z2 = Theta1 * a1';  
+  a2 = sigmoid(z2); % 25x1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  a2 = [1; a2]; % 1x26
+  z3 = Theta2 * a2; 
+  a3 = sigmoid(z3); % 10x1
+  
+  d3 = a3 - y_new(:,t); % 10x1
+  z2 = [1; z2]; %26x1
+  d2 = (Theta2' * d3) .* sigmoidGradient(z2); % 26x1
+  d2 = d2(2:end); % remove bias for d0  
+                  % 25x1
+  % size(Theta2_grad)%10x26
+  % size(Theta2_grad(:,t:t)) % 10x1
+  Theta2_grad = Theta2_grad + d3 * a2';  
+  % size(Theta1_grad)%25x401  
+  % size(Theta1_grad(t:t,:)) % 1x401  
+  % size(Theta1_grad(:,t:t)) % 25x1  
+  Theta1_grad = Theta1_grad + d2 * a1;
+  
+endfor
+Theta1_grad  = Theta1_grad ./ m;
+Theta2_grad  = Theta2_grad ./ m;
 
 % -------------------------------------------------------------
-
+% Part 3: Implement regularization with the cost function and gradients.
+%
 % =========================================================================
 
 % Unroll gradients
-grad = [Theta1_grad(:) ; Theta2_grad(:)];
+g1 = Theta1_grad + (lambda / m) .* Theta1;
+g1(:,1) = Theta1_grad(:,1);
+g2 = Theta2_grad + (lambda / m) .* Theta2;
+g2(:,1) = Theta2_grad(:,1);
+%grad = [Theta1_grad(:) ; Theta2_grad(:)];
+grad = [g1(:) ; g2(:)];
 
 
 end
