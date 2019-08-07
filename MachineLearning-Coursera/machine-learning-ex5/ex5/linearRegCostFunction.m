@@ -19,18 +19,22 @@ grad = zeros(size(theta));
 %               You should set J to the cost and grad to the gradient.
 %
 
+h = sum(theta' .* X, 2); % 2 indicated to sum each row
+S = (h - y) .^ 2;
+J = sum(S) / (2 * m);
 
-
-
-
-
-
-
-
-
-
-
+t = theta;
+t(1) = 0;
+S2= sum(t .^ 2);
+J = J + (lambda / (2 * m)).* S2;
 % =========================================================================
+
+P = (h - y) .* X;
+S1 = sum(P) / m;
+t = theta;
+t(1) = 0;
+S2 = (lambda / m ) * t;
+grad = S1 + S2';
 
 grad = grad(:);
 
