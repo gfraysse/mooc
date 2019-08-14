@@ -26,6 +26,31 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
+for i = 1:K
+  c = zeros(m, 1);
+  for j = 1:m
+    if idx(j) == i
+        c(j,:) = 1;
+     endif
+  endfor
+  centroids(i,:) = (X' * c) ./ sum(c);
+endfor
+
+%for i = 1:K
+%  
+%  c = zeros(1, K);
+%  c(:,i) = 1;
+%  % Compute pivot matrix where the column i is filled with indexes
+%  pivot = idx * c;
+%  % 
+%  tmp = zeros(m,K);
+%  tmp(:,i) = i;
+%  tmp = pivot - tmp
+%  pivot = pivot - tmp;
+%  total = sum(pivot) / i;
+%  value = (X' * pivot) ./ total;
+%  centroids(i,:) = value(:,i)';
+%endfor
 
 
 
