@@ -1,0 +1,10 @@
+Waterbolt: 64237
+Frostbite: 90429
+Frostbite: 21145
+7
+Fireball: 86721
+Thunderstorm: 32104
+Waterbolt: 71342
+4
+Frostbite: 304
+Waterbolt: 15790
